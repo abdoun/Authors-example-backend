@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
+
 
 
 class UserController extends Controller
@@ -26,9 +28,9 @@ class UserController extends Controller
         ]);
       $user = User::where('email', $request->input('email'))->first();
       if($user){
-        if(Hash::check($request->input('password'), hash::make($user->password))){
+        if(Hash::check($request->input('password'), $user->password)){
             $apikey = base64_encode(Str::random(40));
-            User::where('email', $request->input('email'))->update(['api_key' => "$apikey"]);;
+            User::where('email', $request->input('email'))->update(['api_key' => "$apikey"]);
             return response()->json(['status' => 'success','api_key' => $apikey]);
         }else{
             return response()->json(['status' => 'fail'],401);

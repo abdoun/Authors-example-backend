@@ -14,21 +14,21 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, X-Auth-Token, Origin, Authorization');
 
-Route::options('/{any:.*}', [
-    'middleware' => ['CorsMiddleware'],
-    function (){ 
-        return response(['status' => 'success']); 
-    }
-  ]
- );
+$router->options('/{any:.*}', function () {
+    return response('', 200);
+});
+
 
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->group(['prefix' => 'api','middleware' => 'CorsMiddleware'], function () use ($router) {
-    $router->get('login',['uses' => 'UserController@authenticate']);
+// Public routes (no auth)
+$router->group(['prefix' => 'api'], function () use ($router) {
+    $router->get('login', ['uses' => 'UserController@authenticate']);
+});
 
+$router->group(['prefix' => 'api', 'middleware' => 'auth'], function () use ($router) {
     $router->get('authors',  ['uses' => 'AuthorController@showAllAuthors']);
 
     $router->get('authors/{id}', ['uses' => 'AuthorController@showOneAuthor']);

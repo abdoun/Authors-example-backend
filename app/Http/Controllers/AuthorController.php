@@ -19,9 +19,7 @@ class AuthorController extends Controller
     }
     public function showAllAuthors()
     {
-        $author = Auth::user()->author()->get();
-        return response()->json($author);
-        //return response()->json(Author::all());
+        return response()->json(Author::all());
     }
 
     public function showOneAuthor($id)
